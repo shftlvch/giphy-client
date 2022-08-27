@@ -42,8 +42,10 @@ const Placeholder = ({
       <div className="mb-4">Start typing to search.</div>
       <div>Need ideas? Try:</div>{" "}
       <div className="flex flex-wrap justify-center gap-1 max-w-md">
-        {IDEAS.map((idea) => (
-          <PlaceholderTag onClick={() => onSelect(idea)}>{idea}</PlaceholderTag>
+        {IDEAS.map((idea, indx) => (
+          <PlaceholderTag key={indx} onClick={() => onSelect(idea)}>
+            {idea}
+          </PlaceholderTag>
         ))}
       </div>
     </div>
