@@ -10,6 +10,7 @@ type InputProps = {
 }
 
 export const Input = ({
+  className,
   label,
   placeholder,
   name,
@@ -18,7 +19,7 @@ export const Input = ({
 }: PropsWithCN<InputProps>) => {
   const id = useId()
   return (
-    <div className="col-span-6 sm:col-span-3">
+    <div className={`col-span-6 sm:col-span-3 ${className || ""}`}>
       {label && (
         <label htmlFor={id} className="block text-sm font-medium text-gray-700">
           {label}

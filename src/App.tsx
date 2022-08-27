@@ -1,17 +1,18 @@
 import Button from "@/components/Button/Button"
 import { ChangeEvent, FormEvent, useEffect, useState } from "react"
-import { Input } from "./components/Form/Input/Input"
-import Preview from "./components/Preview/Preview"
-import logo from "./logo.svg"
-import { GIF, SearchRequest } from "./types"
-import fetcher from "./utils/fetcher"
+import { Input } from "@/components/Form/Input/Input"
+import Preview from "@/components/Preview/Preview"
+import { GIF, SearchRequest } from "@/types"
+import fetcher from "@/utils/fetcher"
+import { useDebounce } from "./hooks/useDebounce"
 
 function App() {
   const [q, setQ] = useState<string>("")
   const [result, setResult] = useState<GIF[]>()
+  const debouncedQ = useDebounce<string>(q, 500)
   useEffect(() => {
     const args: SearchRequest = {
-      q,
+      q: debouncedQ,
       offset: 0,
       limit: 9
     }
@@ -24,23 +25,23 @@ function App() {
       setResult(resp)
     }
     search()
-  }, [q])
+  }, [debouncedQ])
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value)
     setQ(e.target.value)
   }
 
   return (
-    <div className="container">
+    <div className="container pt-8">
       <header></header>
       <Input
         name="q"
         value={q}
         onChange={handleSearch}
         placeholder="Search for gifs..."
+        className="mb-6"
       />
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
         {result?.map((gif) => (
           <Preview key={gif.id} {...gif} />
         ))}
