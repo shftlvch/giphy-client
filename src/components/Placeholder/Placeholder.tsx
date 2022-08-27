@@ -11,7 +11,8 @@ const IDEAS = [
   "sam harris",
   "christopher nolan",
   "is lex fridman a robot?",
-  "the office"
+  "the office",
+  "what is love?"
 ]
 
 const PlaceholderTag = ({

@@ -19,7 +19,7 @@ export const Input = ({
 }: PropsWithCN<InputProps>) => {
   const id = useId()
   return (
-    <div className={`col-span-6 sm:col-span-3 ${className || ""}`}>
+    <div className={`${className || ""}`}>
       {label && (
         <label htmlFor={id} className="block text-sm font-medium text-gray-700">
           {label}

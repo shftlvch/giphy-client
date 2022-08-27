@@ -1,12 +1,11 @@
-import Button from "@/components/Button/Button"
-import { ChangeEvent, FormEvent, useEffect, useState } from "react"
-import { Input } from "@/components/Form/Input/Input"
+import { useEffect, useState } from "react"
 import Preview from "@/components/Preview/Preview"
 import { GIF, SearchRequest } from "@/types"
 import fetcher from "@/utils/fetcher"
 import { useDebounce } from "./hooks/useDebounce"
 import Skeleton from "./components/Skeleton/Skeleton"
 import Placeholder from "./components/Placeholder/Placeholder"
+import { Search } from "./components/Search/Search"
 
 function App() {
   const [q, setQ] = useState<string>("")
@@ -35,25 +34,12 @@ function App() {
       setResult(resp)
       setIsValidating(false)
     }
-    console.log("search")
     search()
   }, [debouncedQ])
 
-  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    setQ(e.target.value)
-  }
-
-  console.log("result", result)
   return (
     <div className="container pt-8">
-      <header></header>
-      <Input
-        name="q"
-        value={q}
-        onChange={handleSearch}
-        placeholder="Search for gifs..."
-        className="mb-6 max-w-md mx-auto"
-      />
+      <Search value={q} onChange={setQ} className="mb-6 md:max-w-md mx-auto" />
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {!result && !isValidating && (
           <Placeholder onSelect={setQ} className={"col-span-full py-32"} />
