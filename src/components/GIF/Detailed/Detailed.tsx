@@ -2,7 +2,7 @@ import Skeleton from "@/components/Skeleton/Skeleton"
 import { GIF, PropsWithCN } from "@/types"
 
 const Detailed = ({ className, gif }: PropsWithCN<{ gif?: GIF }>) => {
-  const { title, images, id, slug, rating, username, url } = gif || {}
+  const { title, images, id, rating, username, url } = gif || {}
   return (
     <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 ${className || ""}`}>
       <div className="aspect-square rounded-md overflow-hidden bg-slate-700 col-span-2">

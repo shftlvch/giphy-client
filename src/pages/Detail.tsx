@@ -3,24 +3,17 @@ import { GIF } from "@/types"
 import fetcher from "@/utils/fetcher"
 import { Link, useParams } from "react-router-dom"
 import Detailed from "@/components/GIF/Detailed/Detailed"
+import { useCurrentContext } from "@/contexts/GiphyContext/GiphyContext"
 
 function Detail() {
   const { id } = useParams()
-  const [gif, setGif] = useState<GIF>()
+  const { gif, set } = useCurrentContext()
   useEffect(() => {
-    if (id === "") {
-      setGif(undefined)
-      return
+    set(id)
+    return () => {
+      set()
     }
-
-    async function fetch() {
-      const resp = await fetcher<GIF>({
-        endpoint: `gifs/${id}`
-      })
-      setGif(resp)
-    }
-    fetch()
-  }, [id])
+  }, [])
 
   return (
     <div className="container pt-8">
