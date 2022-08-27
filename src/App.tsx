@@ -1,10 +1,12 @@
 import Button from "@/components/Button/Button"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import Preview from "./components/Preview/Preview"
 import logo from "./logo.svg"
-import { SearchRequest } from "./types"
+import { GIF, SearchRequest } from "./types"
 import fetcher from "./utils/fetcher"
 
 function App() {
+  const [result, setResult] = useState<GIF[]>()
   useEffect(() => {
     const args: SearchRequest = {
       q: "star wars",
@@ -13,18 +15,23 @@ function App() {
     }
 
     async function search() {
-      const resp = await fetcher({
+      const resp = await fetcher<GIF[]>({
         endpoint: "gifs/search",
         args
       })
-      console.log(resp)
+      setResult(resp)
     }
     search()
   }, [])
+
   return (
     <div className="container">
       <header></header>
-      hello
+      <div className="grid grid-cols-3 gap-4">
+        {result?.map((gif) => (
+          <Preview key={gif.id} {...gif} />
+        ))}
+      </div>
     </div>
   )
 }
