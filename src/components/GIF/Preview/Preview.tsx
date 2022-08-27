@@ -5,9 +5,9 @@ const Preview = ({ className, title, images, id, slug }: PropsWithCN<GIF>) => {
   return (
     <Link to={`/${id}`}>
       <div
-        className={`rounded-md overflow-hidden cursor-pointer ${
+        className={`rounded-md overflow-hidden cursor-pointer group bg-slate-700${
           className || ""
-        } group bg-slate-700`}
+        }`}
       >
         {/* <h3 className="text-xl">{title}</h3> */}
         <div className="aspect-square">

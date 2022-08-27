@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import Preview from "@/components/Preview/Preview"
+import Preview from "@/components/GIF/Preview/Preview"
 import { GIF, SearchRequest } from "@/types"
 import fetcher from "@/utils/fetcher"
 import { useDebounce } from "@/hooks/useDebounce"

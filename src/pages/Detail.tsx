@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
-import Preview from "@/components/Preview/Preview"
 import { GIF } from "@/types"
 import fetcher from "@/utils/fetcher"
 import { useParams } from "react-router-dom"
+import Detailed from "@/components/GIF/Detailed/Detailed"
 
 function Detail() {
   const { id } = useParams()
@@ -23,7 +23,7 @@ function Detail() {
     fetch()
   }, [id])
 
-  return <div className="container pt-8">{gif && <Preview {...gif} />}</div>
+  return <div className="container pt-8">{gif && <Detailed {...gif} />}</div>
 }
 
 export default Detail
