@@ -4,8 +4,8 @@ import { GIF, SearchRequest } from "@/types"
 import fetcher from "@/utils/fetcher"
 import { useDebounce } from "@/hooks/useDebounce"
 import Skeleton from "@/components/Skeleton/Skeleton"
-import Placeholder from "@/components/Placeholder/Placeholder"
 import { Search } from "@/components/Search/Search"
+import EmptyPlaceholder from "@/components/Placeholder/EmptyPlaceholder"
 
 const PAGE_SIZE = 9
 
@@ -44,9 +44,11 @@ function Home() {
       <Search value={q} onChange={setQ} className="mb-6 md:max-w-md mx-auto" />
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {!result && !isValidating && (
-          <Placeholder onSelect={setQ} className={"col-span-full py-32"} />
+          <EmptyPlaceholder onSelect={setQ} className={"col-span-full py-32"} />
         )}
-        {isValidating && <Skeleton count={PAGE_SIZE} />}
+        {isValidating && (
+          <Skeleton count={PAGE_SIZE} className={"w-full aspect-square"} />
+        )}
         {!isValidating &&
           result?.map((gif, indx) => <Preview key={gif.id} {...gif} />)}
       </div>

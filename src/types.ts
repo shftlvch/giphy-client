@@ -5,11 +5,13 @@ export type PropsWithCNAndChildren<T> = PropsWithChildren<PropsWithCN<T>>
 
 export type SearchRequest = PaginationRequest & {
   q: string
-  rating?: "g" | "pg" | "pg-13" | "r"
+  rating?: Rating
   lang?: "en"
   random_id?: string
   bundle?: string
 }
+
+export type Rating = "g" | "pg" | "pg-13" | "r"
 
 export type PaginationRequest = {
   limit?: number
@@ -24,6 +26,7 @@ export type GIF = {
   username: string
   title: string
   images: Images
+  rating: Rating
 }
 
 export type ImageType =

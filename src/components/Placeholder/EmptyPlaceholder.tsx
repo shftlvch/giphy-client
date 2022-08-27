@@ -15,7 +15,7 @@ const IDEAS = [
   "what is love?"
 ]
 
-const PlaceholderTag = ({
+const EmptyPlaceholderTag = ({
   onClick,
   children
 }: PropsWithChildren<{ onClick: () => void }>) => {
@@ -29,7 +29,7 @@ const PlaceholderTag = ({
   )
 }
 
-const Placeholder = ({
+const EmptyPlaceholder = ({
   className,
   onSelect
 }: PropsWithCN<{ onSelect: (value: string) => void }>) => {
@@ -43,13 +43,13 @@ const Placeholder = ({
       <div>Need ideas? Try:</div>{" "}
       <div className="flex flex-wrap justify-center gap-1 max-w-md">
         {IDEAS.map((idea, indx) => (
-          <PlaceholderTag key={indx} onClick={() => onSelect(idea)}>
+          <EmptyPlaceholderTag key={indx} onClick={() => onSelect(idea)}>
             {idea}
-          </PlaceholderTag>
+          </EmptyPlaceholderTag>
         ))}
       </div>
     </div>
   )
 }
 
-export default Placeholder
+export default EmptyPlaceholder

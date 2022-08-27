@@ -1,12 +1,17 @@
 import { PropsWithCN, PropsWithCNAndChildren } from "@/types"
 
-const Skeleton = ({ count }: PropsWithCN<{ count: number }>): JSX.Element => {
+const Skeleton = ({
+  className,
+  count = 1
+}: PropsWithCN<{ count?: number }>): JSX.Element => {
   return (
     <>
       {[...Array(count)].map((_, indx) => (
         <div
           key={indx}
-          className="aspect-square animate-pulse bg-slate-700 rounded-md w-full"
+          className={`animate-pulse bg-slate-700 rounded-md  ${
+            className || ""
+          }`}
         ></div>
       ))}
     </>
