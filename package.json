@@ -17,10 +17,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-app-rewired eject",
     "lint": "eslint .",
     "check-types": "tsc --noEmit",
     "prepare": "husky install"
@@ -44,11 +44,14 @@
     ]
   },
   "devDependencies": {
+    "@tailwindcss/forms": "^0.5.2",
     "autoprefixer": "^10.4.8",
     "eslint-config-prettier": "^8.5.0",
     "husky": "^8.0.0",
     "postcss": "^8.4.16",
     "prettier": "^2.7.1",
+    "react-app-rewire-alias": "^1.1.7",
+    "react-app-rewired": "^2.2.1",
     "tailwindcss": "^3.1.8"
   }
 }
