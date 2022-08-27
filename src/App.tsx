@@ -5,12 +5,21 @@ import Preview from "@/components/Preview/Preview"
 import { GIF, SearchRequest } from "@/types"
 import fetcher from "@/utils/fetcher"
 import { useDebounce } from "./hooks/useDebounce"
+import Skeleton from "./components/Skeleton/Skeleton"
+import Placeholder from "./components/Placeholder/Placeholder"
 
 function App() {
   const [q, setQ] = useState<string>("")
+  const [isValidating, setIsValidating] = useState<boolean>(false)
   const [result, setResult] = useState<GIF[]>()
-  const debouncedQ = useDebounce<string>(q, 500)
+  const debouncedQ = useDebounce<string>(q, 300)
+
   useEffect(() => {
+    if (debouncedQ === "") {
+      setResult(undefined)
+      return
+    }
+
     const args: SearchRequest = {
       q: debouncedQ,
       offset: 0,
@@ -18,12 +27,15 @@ function App() {
     }
 
     async function search() {
+      setIsValidating(true)
       const resp = await fetcher<GIF[]>({
         endpoint: "gifs/search",
         args
       })
       setResult(resp)
+      setIsValidating(false)
     }
+    console.log("search")
     search()
   }, [debouncedQ])
 
@@ -31,6 +43,7 @@ function App() {
     setQ(e.target.value)
   }
 
+  console.log("result", result)
   return (
     <div className="container pt-8">
       <header></header>
@@ -39,12 +52,15 @@ function App() {
         value={q}
         onChange={handleSearch}
         placeholder="Search for gifs..."
-        className="mb-6"
+        className="mb-6 max-w-md mx-auto"
       />
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-        {result?.map((gif) => (
-          <Preview key={gif.id} {...gif} />
-        ))}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {!result && !isValidating && (
+          <Placeholder onSelect={setQ} className={"col-span-full py-32"} />
+        )}
+        {isValidating && <Skeleton count={9} />}
+        {!isValidating &&
+          result?.map((gif, indx) => <Preview key={gif.id} {...gif} />)}
       </div>
     </div>
   )
