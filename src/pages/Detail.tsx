@@ -3,6 +3,9 @@ import { Link, useParams } from "react-router-dom"
 import Detailed from "@/components/GIF/Detailed/Detailed"
 import { useCurrentContext } from "@/contexts/GiphyContext/GiphyContext"
 
+/**
+ * GIF detail page
+ */
 function Detail() {
   const { id } = useParams()
   const {
@@ -10,6 +13,7 @@ function Detail() {
     set
   } = useCurrentContext()
 
+  /** Use params from the router to set current */
   useEffect(() => {
     set(id)
     return () => {

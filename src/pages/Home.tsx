@@ -6,6 +6,10 @@ import { useSearchContext } from "@/contexts/GiphyContext/GiphyContext"
 import { PAGE_SIZE } from "@/constants"
 import InfiniteScroll from "react-infinite-scroll-component"
 
+/**
+ * Home/search page
+ *
+ */
 function Home() {
   const {
     state: { q, isValidating, pages, hasMore },
@@ -37,6 +41,11 @@ function Home() {
         >
           {isValidating && !result && (
             <Skeleton count={PAGE_SIZE} className={"w-full aspect-square"} />
+          )}
+          {result?.length === 0 && (
+            <div className="flex justify-center items-center col-span-full py-32">
+              No items found 😢
+            </div>
           )}
           {result?.map((gif, indx) => (
             <Preview key={`${gif.id}/${indx}`} {...gif} />

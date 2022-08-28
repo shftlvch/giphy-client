@@ -7,8 +7,7 @@ import {
   PropsWithChildren,
   useContext,
   useEffect,
-  useReducer,
-  useState
+  useReducer
 } from "react"
 import currentReducer, {
   CurrentState,
@@ -33,6 +32,9 @@ interface IGiphyContext {
   }
 }
 
+/**
+ * We can add chaching for each request here
+ */
 export const GiphyContext = createContext<IGiphyContext>({
   current: {
     state: initialCurrentState,
@@ -45,11 +47,20 @@ export const GiphyContext = createContext<IGiphyContext>({
   }
 })
 
+/**
+ * Base context
+ */
 export const useGiphyContext = (): IGiphyContext => useContext(GiphyContext)
 
+/**
+ * Context for the Detail vew
+ */
 export const useCurrentContext = (): IGiphyContext["current"] =>
   useContext(GiphyContext).current
 
+/**
+ * Context for the Search vew
+ */
 export const useSearchContext = (): IGiphyContext["search"] =>
   useContext(GiphyContext).search
 
@@ -65,6 +76,9 @@ export function GiphyContextProvider({
     initialCurrentState
   )
 
+  /**
+   * Querying search endpoint from the GIPHY API
+   */
   const fetchPage = useCallback(async () => {
     const args: SearchRequest = {
       q: searchState.q,
@@ -84,6 +98,9 @@ export function GiphyContextProvider({
     })
   }, [searchState.q, searchState.size])
 
+  /**
+   * Executing the callback (search endpoint) on changes
+   */
   useEffect(() => {
     if (searchState.q === "") {
       return
@@ -91,6 +108,9 @@ export function GiphyContextProvider({
     fetchPage()
   }, [fetchPage])
 
+  /**
+   * Side-effects when query string changes
+   */
   useEffect(() => {
     if (searchState.q === "") {
       dispatchSearch({
@@ -103,6 +123,9 @@ export function GiphyContextProvider({
     })
   }, [searchState.q])
 
+  /**
+   * Querying get-by-id endpoint from the GIPHY API
+   */
   const fetchCurrent = useCallback(async () => {
     const resp = await fetcher<GIF>({
       endpoint: `gifs/${currentState.id}`
@@ -113,6 +136,9 @@ export function GiphyContextProvider({
     })
   }, [currentState.id])
 
+  /**
+   * Handling current id changes
+   */
   useEffect(() => {
     if (!currentState.id || currentState.id === "") {
       dispatchCurrent({
