@@ -1,5 +1,9 @@
 # Getting Started with Giphy client
 
+### `cp .env.example .env.local`
+
+And set up the API KEY
+
 ### `pnpm start`
 
 Runs the app in the development mode.\
