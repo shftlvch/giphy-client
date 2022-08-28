@@ -5,6 +5,7 @@ import EmptyPlaceholder from "@/components/Placeholder/EmptyPlaceholder"
 import { useSearchContext } from "@/contexts/GiphyContext/GiphyContext"
 import { PAGE_SIZE } from "@/constants"
 import InfiniteScroll from "react-infinite-scroll-component"
+import { Link } from "react-router-dom"
 
 /**
  * Home/search page
@@ -48,7 +49,9 @@ function Home() {
             </div>
           )}
           {result?.map((gif, indx) => (
-            <Preview key={`${gif.id}/${indx}`} {...gif} />
+            <Link to={`/${gif.id}`} key={`${gif.id}/${indx}`}>
+              <Preview {...gif} />
+            </Link>
           ))}
         </InfiniteScroll>
       )}
