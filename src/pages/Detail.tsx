@@ -19,7 +19,7 @@ function Detail() {
     return () => {
       set()
     }
-  }, [])
+  }, [id])
 
   return (
     <div className="container pt-8">

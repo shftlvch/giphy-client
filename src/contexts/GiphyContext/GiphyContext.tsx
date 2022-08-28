@@ -80,6 +80,9 @@ export function GiphyContextProvider({
    * Querying search endpoint from the GIPHY API
    */
   const fetchPage = useCallback(async () => {
+    if (searchState.q === "") {
+      return
+    }
     const args: SearchRequest = {
       q: searchState.q,
       offset: searchState.size * PAGE_SIZE,
@@ -102,9 +105,6 @@ export function GiphyContextProvider({
    * Executing the callback (search endpoint) on changes
    */
   useEffect(() => {
-    if (searchState.q === "") {
-      return
-    }
     fetchPage()
   }, [fetchPage])
 
@@ -127,6 +127,12 @@ export function GiphyContextProvider({
    * Querying get-by-id endpoint from the GIPHY API
    */
   const fetchCurrent = useCallback(async () => {
+    if (!currentState.id || currentState.id === "") {
+      dispatchCurrent({
+        type: CURRENT_ACTIONS.RESET_ENTITY
+      })
+      return
+    }
     const resp = await fetcher<GIF>({
       endpoint: `gifs/${currentState.id}`
     })
@@ -140,14 +146,8 @@ export function GiphyContextProvider({
    * Handling current id changes
    */
   useEffect(() => {
-    if (!currentState.id || currentState.id === "") {
-      dispatchCurrent({
-        type: CURRENT_ACTIONS.RESET_ENTITY
-      })
-      return
-    }
     fetchCurrent()
-  }, [currentState.id])
+  }, [fetchCurrent])
 
   return (
     <GiphyContext.Provider
