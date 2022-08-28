@@ -1,5 +1,4 @@
 import { PAGE_SIZE } from "@/constants"
-import { useDebounce } from "@/hooks/useDebounce"
 import { GIF, SearchRequest } from "@/types"
 import fetcher from "@/utils/fetcher"
 import {
@@ -34,7 +33,7 @@ export const GiphyContext = createContext<IGiphyContext>({
     q: "",
     isValidating: false,
     result: undefined,
-    page: 1,
+    page: 0,
     set: () => {},
     nextPage: () => {}
   }
@@ -52,19 +51,19 @@ export function GiphyContextProvider({
   children
 }: PropsWithChildren<unknown>): JSX.Element {
   const [q, setQ] = useState<string>("")
+  const [page, setPage] = useState(0)
   const [isValidating, setIsValidating] = useState<boolean>(false)
-  const [result, setResult] = useState<GIF[]>()
-  const debouncedQ = useDebounce<string>(q, 300)
+  const [result, setResult] = useState<GIF[][]>()
 
   useEffect(() => {
-    if (debouncedQ === "") {
+    if (q === "") {
       setResult(undefined)
       return
     }
 
     const args: SearchRequest = {
-      q: debouncedQ,
-      offset: 0,
+      q,
+      offset: page * PAGE_SIZE,
       limit: PAGE_SIZE
     }
 
@@ -74,11 +73,11 @@ export function GiphyContextProvider({
         endpoint: "gifs/search",
         args
       })
-      setResult(resp)
+      result ? setResult([...result, resp]) : setResult([resp])
       setIsValidating(false)
     }
     search()
-  }, [debouncedQ])
+  }, [q, page])
 
   const [currentId, setCurrentId] = useState<string>()
   const [gif, setGif] = useState<GIF>()
@@ -108,9 +107,13 @@ export function GiphyContextProvider({
           q,
           set: setQ,
           isValidating,
-          nextPage: () => {},
+          nextPage: () => {
+            setPage((page) => page + 1)
+          },
           page: 1,
-          result
+          result: result?.reduce((prev, curr) => {
+            return [...prev, ...curr]
+          }, [])
         }
       }}
     >
