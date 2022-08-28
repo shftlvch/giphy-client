@@ -10,6 +10,11 @@ import {
   useReducer,
   useState
 } from "react"
+import currentReducer, {
+  CurrentState,
+  CURRENT_ACTIONS,
+  initialCurrentState
+} from "./reducers/current"
 import searchReducer, {
   initialSearchState,
   SearchState,
@@ -18,8 +23,8 @@ import searchReducer, {
 
 interface IGiphyContext {
   current: {
+    state: CurrentState
     set: (id?: string) => void
-    gif: GIF | undefined
   }
   search: {
     state: SearchState
@@ -30,7 +35,7 @@ interface IGiphyContext {
 
 export const GiphyContext = createContext<IGiphyContext>({
   current: {
-    gif: undefined,
+    state: initialCurrentState,
     set: () => {}
   },
   search: {
@@ -54,6 +59,10 @@ export function GiphyContextProvider({
   const [searchState, dispatchSearch] = useReducer(
     searchReducer,
     initialSearchState
+  )
+  const [currentState, dispatchCurrent] = useReducer(
+    currentReducer,
+    initialCurrentState
   )
 
   const fetchPage = useCallback(async () => {
@@ -94,29 +103,36 @@ export function GiphyContextProvider({
     })
   }, [searchState.q])
 
-  const [currentId, setCurrentId] = useState<string>()
-  const [gif, setGif] = useState<GIF>()
+  const fetchCurrent = useCallback(async () => {
+    const resp = await fetcher<GIF>({
+      endpoint: `gifs/${currentState.id}`
+    })
+    dispatchCurrent({
+      type: CURRENT_ACTIONS.RECEIVE_ENTITY,
+      payload: { gif: resp }
+    })
+  }, [currentState.id])
+
   useEffect(() => {
-    if (!currentId || currentId === "") {
-      setGif(undefined)
+    if (!currentState.id || currentState.id === "") {
+      dispatchCurrent({
+        type: CURRENT_ACTIONS.RESET_ENTITY
+      })
       return
     }
-
-    async function fetch() {
-      const resp = await fetcher<GIF>({
-        endpoint: `gifs/${currentId}`
-      })
-      setGif(resp)
-    }
-    fetch()
-  }, [currentId])
+    fetchCurrent()
+  }, [currentState.id])
 
   return (
     <GiphyContext.Provider
       value={{
         current: {
-          set: setCurrentId,
-          gif
+          set: (id?: string) =>
+            dispatchCurrent({
+              type: CURRENT_ACTIONS.SET_ID,
+              payload: { id }
+            }),
+          state: currentState
         },
         search: {
           state: searchState,

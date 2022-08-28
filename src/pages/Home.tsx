@@ -27,7 +27,7 @@ function Home() {
       )}
       {q !== "" && (
         <InfiniteScroll
-          dataLength={result?.length || 0} //This is important field to render the next data
+          dataLength={result?.length || 0}
           next={nextPage}
           hasMore={hasMore}
           loader={

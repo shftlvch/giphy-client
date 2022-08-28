@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react"
-import { GIF } from "@/types"
-import fetcher from "@/utils/fetcher"
+import { useEffect } from "react"
 import { Link, useParams } from "react-router-dom"
 import Detailed from "@/components/GIF/Detailed/Detailed"
 import { useCurrentContext } from "@/contexts/GiphyContext/GiphyContext"
 
 function Detail() {
   const { id } = useParams()
-  const { gif, set } = useCurrentContext()
+  const {
+    state: { gif },
+    set
+  } = useCurrentContext()
+
   useEffect(() => {
     set(id)
     return () => {
