@@ -1,0 +1,3 @@
+export enum CURRENT_ACTIONS {
+  SET_CURRENT
+}

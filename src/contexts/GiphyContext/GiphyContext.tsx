@@ -1,13 +1,20 @@
 import { PAGE_SIZE } from "@/constants"
 import { GIF, SearchRequest } from "@/types"
 import fetcher from "@/utils/fetcher"
+import { useCallback } from "react"
 import {
   createContext,
   PropsWithChildren,
   useContext,
   useEffect,
+  useReducer,
   useState
 } from "react"
+import searchReducer, {
+  initialSearchState,
+  SearchState,
+  SEARCH_ACTIONS
+} from "./reducers/search"
 
 interface IGiphyContext {
   current: {
@@ -15,11 +22,8 @@ interface IGiphyContext {
     gif: GIF | undefined
   }
   search: {
-    q: string
+    state: SearchState
     set: (q: string) => void
-    isValidating: boolean
-    result: GIF[] | undefined
-    page: number
     nextPage: () => void
   }
 }
@@ -30,10 +34,7 @@ export const GiphyContext = createContext<IGiphyContext>({
     set: () => {}
   },
   search: {
-    q: "",
-    isValidating: false,
-    result: undefined,
-    page: 0,
+    state: initialSearchState,
     set: () => {},
     nextPage: () => {}
   }
@@ -50,34 +51,48 @@ export const useSearchContext = (): IGiphyContext["search"] =>
 export function GiphyContextProvider({
   children
 }: PropsWithChildren<unknown>): JSX.Element {
-  const [q, setQ] = useState<string>("")
-  const [page, setPage] = useState(0)
-  const [isValidating, setIsValidating] = useState<boolean>(false)
-  const [result, setResult] = useState<GIF[][]>()
+  const [searchState, dispatchSearch] = useReducer(
+    searchReducer,
+    initialSearchState
+  )
 
-  useEffect(() => {
-    if (q === "") {
-      setResult(undefined)
-      return
-    }
-
+  const fetchPage = useCallback(async () => {
     const args: SearchRequest = {
-      q,
-      offset: page * PAGE_SIZE,
+      q: searchState.q,
+      offset: searchState.size * PAGE_SIZE,
       limit: PAGE_SIZE
     }
+    const resp = await fetcher<GIF[]>({
+      endpoint: "gifs/search",
+      args
+    })
+    dispatchSearch({
+      type: SEARCH_ACTIONS.RECEIVE_PAGE,
+      payload: {
+        gifs: resp,
+        hasMore: resp.length === PAGE_SIZE
+      }
+    })
+  }, [searchState.q, searchState.size])
 
-    async function search() {
-      setIsValidating(true)
-      const resp = await fetcher<GIF[]>({
-        endpoint: "gifs/search",
-        args
-      })
-      result ? setResult([...result, resp]) : setResult([resp])
-      setIsValidating(false)
+  useEffect(() => {
+    if (searchState.q === "") {
+      return
     }
-    search()
-  }, [q, page])
+    fetchPage()
+  }, [fetchPage])
+
+  useEffect(() => {
+    if (searchState.q === "") {
+      dispatchSearch({
+        type: SEARCH_ACTIONS.RESET_ENTITIES
+      })
+      return
+    }
+    dispatchSearch({
+      type: SEARCH_ACTIONS.REQUEST_ENTITIES
+    })
+  }, [searchState.q])
 
   const [currentId, setCurrentId] = useState<string>()
   const [gif, setGif] = useState<GIF>()
@@ -104,16 +119,16 @@ export function GiphyContextProvider({
           gif
         },
         search: {
-          q,
-          set: setQ,
-          isValidating,
-          nextPage: () => {
-            setPage((page) => page + 1)
-          },
-          page: 1,
-          result: result?.reduce((prev, curr) => {
-            return [...prev, ...curr]
-          }, [])
+          state: searchState,
+          set: (q: string) =>
+            dispatchSearch({
+              type: SEARCH_ACTIONS.SET_QUERY,
+              payload: { q }
+            }),
+          nextPage: () =>
+            dispatchSearch({
+              type: SEARCH_ACTIONS.REQUEST_MORE_ENTITIES
+            })
         }
       }}
     >

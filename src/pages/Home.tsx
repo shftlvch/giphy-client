@@ -7,7 +7,14 @@ import { PAGE_SIZE } from "@/constants"
 import InfiniteScroll from "react-infinite-scroll-component"
 
 function Home() {
-  const { q, set, isValidating, result, nextPage } = useSearchContext()
+  const {
+    state: { q, isValidating, pages, hasMore },
+    set,
+    nextPage
+  } = useSearchContext()
+  const result = pages?.reduce((prev, curr) => {
+    return [...prev, ...curr]
+  }, [])
   return (
     <div className="container pt-8">
       <Search
@@ -22,7 +29,7 @@ function Home() {
         <InfiniteScroll
           dataLength={result?.length || 0} //This is important field to render the next data
           next={nextPage}
-          hasMore={true}
+          hasMore={hasMore}
           loader={
             <Skeleton count={PAGE_SIZE} className={"w-full aspect-square"} />
           }
@@ -31,8 +38,8 @@ function Home() {
           {isValidating && !result && (
             <Skeleton count={PAGE_SIZE} className={"w-full aspect-square"} />
           )}
-          {result?.map((gif) => (
-            <Preview key={gif.id} {...gif} />
+          {result?.map((gif, indx) => (
+            <Preview key={`${gif.id}/${indx}`} {...gif} />
           ))}
         </InfiniteScroll>
       )}
